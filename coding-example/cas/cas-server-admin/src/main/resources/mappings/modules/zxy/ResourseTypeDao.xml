@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.ResourseTypeDao">
+    
+	<sql id="resourseTypeColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.pid AS "pid",
+		a.pids AS "pids",
+		a.type AS "type",
+		a.sort AS "sort",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="resourseTypeJoins">
+		LEFT JOIN resourse_type b on b.id=a.pid
+	</sql>
+    
+	<select id="get" resultType="ResourseType">
+		SELECT 
+			<include refid="resourseTypeColumns"/>
+			,b.name AS "pname"
+		FROM resourse_type a
+		<include refid="resourseTypeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ResourseType">
+		SELECT 
+			<include refid="resourseTypeColumns"/>
+		FROM resourse_type a
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			<if test="name != null and name != ''">
+				and a.name like  CONCAT('%', #{name}, '%') )
+			</if>
+			<if test="type != null and type != ''">
+				and a.type=#{type}
+			</if>
+			<if test="pid != null and pid != ''">
+				and a.pid=#{pid}
+			</if>
+			<if test="pids != null and pids != ''">
+				and a.pids like CONCAT('%,', #{pids}, ',%')
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.pid,a.sort
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ResourseType">
+		SELECT 
+			<include refid="resourseTypeColumns"/>
+		FROM resourse_type a
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO resourse_type(
+			id,
+			name,
+			pid,
+			pids,
+			type,
+			sort,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{pid},
+			#{pids},
+			#{type},
+			#{sort},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE resourse_type SET 	
+			name = #{name},
+			pid = #{pid},
+			pids = #{pids},
+			type = #{type},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE resourse_type SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

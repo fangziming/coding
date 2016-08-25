@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.IssueTeachersDao">
+    
+	<sql id="issueTeachersColumns">
+		a.id AS "id",
+		a.issue_id AS "issueId",
+		a.teacher_id AS "teacher.id",
+		u3.name AS "teacher.name",
+		u3.title AS "teacher.title",
+		u3.photo AS "teacher.photo"
+	</sql>
+	
+	<sql id="issueTeachersJoins">
+		LEFT JOIN teachers u3 ON u3.id = a.teacher_id
+	</sql>
+    
+	<select id="get" resultType="IssueTeachers">
+		SELECT 
+			<include refid="issueTeachersColumns"/>
+		FROM issue_teachers a
+		<include refid="issueTeachersJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="IssueTeachers">
+		SELECT 
+			<include refid="issueTeachersColumns"/>
+		FROM issue_teachers a
+		<include refid="issueTeachersJoins"/>
+		<where>
+			<if test="issueId != null and issueId !=''">
+				a.issue_id = #{issueId}
+			</if>
+			<if test="teacher != null and teacher.id != null and teacher.id !=''">
+				a.teacher_id = #{teacher.id}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO issue_teachers(
+			id,
+			issue_id,
+			teacher_id
+		) VALUES (
+			#{id},
+			#{issueId},
+			#{teacher.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE issue_teachers SET 	
+			issue_id = #{issueId},
+			teacher_id = #{teacher.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM issue_teachers
+		<where>
+			<if test="issueId !=null and issueId != ''">
+				and issue_id = #{issueId}
+			</if>
+			<if test="id !=null and id != ''">
+				and id = #{id}
+			</if>
+		</where>
+	</update>
+	
+</mapper>

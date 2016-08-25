@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.WclassStudentsDao">
+    
+	<sql id="wclassStudentsColumns">
+		a.id AS "id",
+		c.id AS "wclass.id",
+		c.name AS "wclass.name",
+		c.issue_id AS "wclass.issueId",
+		b.id AS "student.id",
+		b.name AS "student.name",
+		a.learningtime AS "learningtime",
+		a.level AS "level",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="wclassStudentsJoins">
+		left join user_info b on b.id=a.student_id
+		left join issue_classes c on c.id=a.class_id
+	</sql>
+    
+	<select id="get" resultType="WclassStudents">
+		SELECT 
+			<include refid="wclassStudentsColumns"/>
+		FROM wclass_students a
+		<include refid="wclassStudentsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="WclassStudents">
+		SELECT 
+			<include refid="wclassStudentsColumns"/>
+		FROM wclass_students a
+		<include refid="wclassStudentsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="wclass != null and wclass.id != null and wclass.id != ''">
+				AND a.class_id = #{wclass.id}
+			</if>
+			<if test="wclass != null and wclass.issueId != null and wclass.issueId != ''">
+				AND c.issue_id = #{wclass.issueId}
+			</if>
+			<if test="student != null and student.name != null and student.name != ''">
+				AND b.name like concat('%',#{student.name},'%')
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="WclassStudents">
+		SELECT 
+			<include refid="wclassStudentsColumns"/>
+		FROM wclass_students a
+		<include refid="wclassStudentsJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO wclass_students(
+			id,
+			class_id,
+			student_id,
+			learningtime,
+			level,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{wclass.id},
+			#{student.id},
+			#{learningtime},
+			#{level},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE wclass_students SET 	
+			<if test="wclass != null and wclass.id != null and wclass.id != ''">
+				class_id = #{wclass.id},
+			</if>
+			<if test="learningtime != null and learningtime != ''">
+				learningtime = #{learningtime},
+			</if>
+			<if test="level != null and level != ''">
+				level = #{level},
+			</if>
+			<if test="remarks != null and remarks != ''">
+				remarks = #{remarks},
+			</if>
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE wclass_students SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

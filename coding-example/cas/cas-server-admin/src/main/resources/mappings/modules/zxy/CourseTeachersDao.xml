@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.CourseTeachersDao">
+    
+	<sql id="courseTeachersColumns">
+		a.id AS "id",
+		a.course_id AS "courseId",
+		a.teacher_id AS "teacher.id",
+		u3.name AS "teacher.name",
+		u3.title AS "teacher.title",
+		u3.photo AS "teacher.photo"
+	</sql>
+	
+	<sql id="courseTeachersJoins">
+		LEFT JOIN teachers u3 ON u3.id = a.teacher_id
+	</sql>
+    
+	<select id="get" resultType="CourseTeachers">
+		SELECT 
+			<include refid="courseTeachersColumns"/>
+		FROM course_teachers a
+		<include refid="courseTeachersJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CourseTeachers">
+		SELECT 
+			<include refid="courseTeachersColumns"/>
+		FROM course_teachers a
+		<include refid="courseTeachersJoins"/>
+		<where>
+			<if test="courseId != null and courseId !=''">
+				a.course_id = #{courseId}
+			</if>
+			<if test="teacher != null and teacher.id != null and teacher.id !=''">
+				a.teacher_id = #{teacher.id}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO course_teachers(
+			id,
+			course_id,
+			teacher_id
+		) VALUES (
+			#{id},
+			#{courseId},
+			#{teacher.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE course_teachers SET 	
+			course_id = #{courseId},
+			teacher_id = #{teacher.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM course_teachers
+		<where>
+			<if test="courseId !=null and courseId != ''">
+				and course_id = #{courseId}
+			</if>
+			<if test="id !=null and id != ''">
+				and id = #{id}
+			</if>
+		</where>
+	</update>
+	
+</mapper>

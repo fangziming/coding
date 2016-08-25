@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.IssueDao">
+    
+	<sql id="issueColumns">
+		a.id AS "id",
+		a.major_id AS "majorId",
+		a.name AS "name",
+		a.num AS "num",
+		a.url AS "url",
+		a.pic_url AS "picUrl",
+		a.price AS "price",
+		a.locknumdownpayment AS "locknumdownpayment",
+		a.downpayment AS "downpayment",
+		a.sellcntprepared AS "sellcntprepared",
+		a.soldcnt AS "soldcnt",
+		a.status AS "status",
+		a.startdate AS "startdate",
+		a.enddate AS "enddate",
+		a.qq AS "qq",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="issueJoins">
+	</sql>
+    
+	<select id="get" resultType="Issue">
+		SELECT 
+			<include refid="issueColumns"/>
+		FROM issue a
+		<include refid="issueJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Issue">
+		SELECT 
+			<include refid="issueColumns"/>
+		FROM issue a
+		<include refid="issueJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="majorId != null and majorId != ''">
+				AND a.major_id = #{majorId}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="name != null and name != ''">
+				ORDER BY name,num
+			</when>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Issue">
+		SELECT 
+			<include refid="issueColumns"/>
+		FROM issue a
+		<include refid="issueJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO issue(
+			id,
+			major_id,
+			name,
+			num,
+			url,
+			pic_url,
+			price,
+			locknumdownpayment,
+			downpayment,
+			sellcntprepared,
+			soldcnt,
+			status,
+			startdate,
+			enddate,
+			qq,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{majorId},
+			#{name},
+			#{num},
+			#{url},
+			#{picUrl},
+			#{price},
+			#{locknumdownpayment},
+			#{downpayment},
+			#{sellcntprepared},
+			#{soldcnt},
+			#{status},
+			#{startdate},
+			#{enddate},
+			#{qq},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE issue SET 	
+			major_id = #{majorId},
+			name = #{name},
+			num = #{num},
+			url = #{url},
+			pic_url = #{picUrl},
+			price = #{price},
+			locknumdownpayment = #{locknumdownpayment},
+			downpayment = #{downpayment},
+			sellcntprepared = #{sellcntprepared},
+			soldcnt = #{soldcnt},
+			status = #{status},
+			startdate = #{startdate},
+			enddate = #{enddate},
+			qq = #{qq},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE issue SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="checkExist" resultType="Issue">
+		SELECT 
+			<include refid="issueColumns"/>
+		FROM issue a
+		<include refid="issueJoins"/>
+		WHERE major_id = #{majorId} and name = #{name} and num = #{num}
+		<if test="id != null and id != ''">
+			and id != #{id}
+		</if>
+	</select>
+</mapper>

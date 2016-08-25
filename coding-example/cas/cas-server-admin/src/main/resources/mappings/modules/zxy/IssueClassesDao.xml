@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.IssueClassesDao">
+    
+	<sql id="issueClassesColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.issue_id AS "issueId",
+		a.startdate AS "startdate",
+		a.enddate AS "enddate",
+		a.studentnum AS "studentnum",
+		a.presentstunum AS "presentstunum",
+		a.stu_rate AS "stuRate",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="issueClassesJoins">
+	</sql>
+    
+	<select id="get" resultType="IssueClasses">
+		SELECT 
+			<include refid="issueClassesColumns"/>
+		FROM issue_classes a
+		<include refid="issueClassesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="IssueClasses">
+		SELECT 
+			<include refid="issueClassesColumns"/>
+		FROM issue_classes a
+		<include refid="issueClassesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="issueId != null and issueId != ''">
+				AND a.issue_id = #{issueId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="IssueClasses">
+		SELECT 
+			<include refid="issueClassesColumns"/>
+		FROM issue_classes a
+		<include refid="issueClassesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO issue_classes(
+			id,
+			name,
+			issue_id,
+			startdate,
+			enddate,
+			studentnum,
+			presentstunum,
+			stu_rate,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{name},
+			#{issueId},
+			#{startdate},
+			#{enddate},
+			#{studentnum},
+			#{presentstunum},
+			#{stuRate},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE issue_classes SET 	
+			name = #{name},
+			issue_id = #{issueId},
+			startdate = #{startdate},
+			enddate = #{enddate},
+			studentnum = #{studentnum},
+			presentstunum = #{presentstunum},
+			stu_rate = #{stuRate},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE issue_classes SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="checkExist" resultType="IssueClasses">
+		SELECT 
+			<include refid="issueClassesColumns"/>
+		FROM issue_classes a
+		<include refid="issueClassesJoins"/>
+		WHERE issue_id = #{issueId} and name = #{name}
+		<if test="id != null and id != ''">
+			and id != #{id}
+		</if>
+	</select>
+</mapper>

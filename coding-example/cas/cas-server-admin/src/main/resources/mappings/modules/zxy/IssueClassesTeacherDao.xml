@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.IssueClassesTeacherDao">
+    
+	<sql id="issueClassesTeacherColumns">
+		a.id AS "id",
+		a.class_id AS "classId",
+		a.teacher_id AS "teacher.id",
+		u3.name AS "teacher.name"
+	</sql>
+	
+	<sql id="issueClassesTeacherJoins">
+		LEFT JOIN teachers u3 ON u3.id = a.teacher_id
+	</sql>
+    
+	<select id="get" resultType="IssueClassesTeacher">
+		SELECT 
+			<include refid="issueClassesTeacherColumns"/>
+		FROM issue_classes_teacher a
+		<include refid="issueClassesTeacherJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="IssueClassesTeacher">
+		SELECT 
+			<include refid="issueClassesTeacherColumns"/>
+		FROM issue_classes_teacher a
+		<include refid="issueClassesTeacherJoins"/>
+		<where>
+			<if test="classId != null and classId != ''">
+				a.class_id = #{classId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="IssueClassesTeacher">
+		SELECT 
+			<include refid="issueClassesTeacherColumns"/>
+		FROM issue_classes_teacher a
+		<include refid="issueClassesTeacherJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO issue_classes_teacher(
+			id,
+			class_id,
+			teacher_id
+		) VALUES (
+			#{id},
+			#{classId},
+			#{teacher.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE issue_classes_teacher SET 	
+			class_id = #{classId},
+			teacher_id = #{teacher.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM issue_classes_teacher
+		WHERE class_id = #{classId}
+	</update>
+	
+</mapper>

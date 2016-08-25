@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.zxy.dao.IssueLockDao">
+    
+	<sql id="issueLockColumns">
+		a.id AS "id",
+		a.issue_id AS "issueId",
+		a.lock_type AS "lockType",
+		a.title AS "title",
+		a.num AS "num",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="issueLockJoins">
+	</sql>
+    
+	<select id="get" resultType="IssueLock">
+		SELECT 
+			<include refid="issueLockColumns"/>
+		FROM issue_lock a
+		<include refid="issueLockJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="IssueLock">
+		SELECT 
+			<include refid="issueLockColumns"/>
+		FROM issue_lock a
+		<include refid="issueLockJoins"/>
+		<where>
+			<if test="lockType != null and lockType !=''">
+				a.lock_type = #{lockType}
+			</if>
+			<if test="issueId != null and issueId !=''">
+				a.issue_id = #{issueId}
+			</if>
+		</where>
+		ORDER BY a.lock_type
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO issue_lock(
+			id,
+			issue_id,
+			lock_type,
+			title,
+			num,
+			remarks
+		) VALUES (
+			#{id},
+			#{issueId},
+			#{lockType},
+			#{title},
+			#{num},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE issue_lock SET 	
+			issue_id = #{issueId},
+			lock_type = #{lockType},
+			title = #{title},
+			num = #{num},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM issue_lock
+		<where>
+			<choose>
+				<when test="issueId !=null and issueId != ''">
+					issue_id = #{issueId}
+				</when>
+				<otherwise>
+					id = #{id}
+				</otherwise>
+			</choose>
+		</where>
+	</update>
+	
+</mapper>
