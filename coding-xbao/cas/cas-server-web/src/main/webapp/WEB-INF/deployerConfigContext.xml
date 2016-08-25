@@ -157,13 +157,13 @@
 	</bean>
 	
 	<bean id="passwordEncoder"
-		class="org.jasig.cas.authentication.handler.sxd.SxdPasswordEncoder"
+		class="com.xbao.cas.authentication.handler.SxdPasswordEncoder"
       	c:encodingAlgorithm="SHA1"
       	c:hashInterations="1024"
       	p:characterEncoding="UTF-8" />
     
     <bean id="dbAuthHandler"
-    	class="org.jasig.cas.authentication.handler.sxd.QueryDatabaseAuthenticationHandler"
+    	class="com.xbao.cas.authentication.handler.QueryDatabaseAuthenticationHandler"
       	p:dataSource-ref="dataSource"
       	p:sql="select password,login_flag from sys_user where login_name=? and del_flag=0" 
       	p:sqlTel="select password,login_flag from sys_user where mobile=? and del_flag=0"
@@ -200,7 +200,7 @@
         <property name="dataSource" ref="dataSource"/>  
     </bean> 
     
-	<bean id="attributeRepository" class="org.jasig.services.persondir.support.xsd.AccoutAttributeDao" >   
+	<bean id="attributeRepository" class="com.xbao.services.persondir.support.AccoutAttributeDao" >   
     	<property name="jdbcTemplate" ref="jdbcTemplate"/> 
     </bean>
     <!-- 
