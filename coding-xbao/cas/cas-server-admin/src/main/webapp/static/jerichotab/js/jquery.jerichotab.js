@@ -1,5 +1,4 @@
-﻿﻿/// <reference path="jquery.js"/>
-/*
+﻿/*
  * jerichotab
  * version: release-2.0.1 (05/13/2009) 
  * @ jQuery v1.3.*
