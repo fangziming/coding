@@ -32,7 +32,7 @@
 		<property name="successUrl" value="${adminPath}?login" />
 		<property name="filters">
             <map>
-                <!-- <entry key="authc" value-ref="formAuthenticationFilter"/> -->
+                <entry key="authc" value-ref="formAuthenticationFilter"/>
                 <entry key="cas" value-ref="casFilter"/> 
                 <entry key="logout" value-ref="logout" /> 
             </map>
