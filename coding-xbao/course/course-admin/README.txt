@@ -1,0 +1,7 @@
+shiro+cas自定义登出的实现
+	使用DefaultWebSecurityManager的情况下，使用shiro自定义session管理器，cas默认提供的cas登出方案SingleSignOutFilter、SingleSignOutHttpSessionListener无效，上述两个类注销的为容器原生的session
+	简单的处理方案，切换为ServletContainerSessionManager，使用原生的session，可以使用cas提供的默认方案
+	非原生的方案，需要改造：
+		DefaultWebSecurityManager，在onSuccessfulLogin时记录_serviceTicket_和session的对应关系，具体见CasSecurityManager
+		SingleSignOutFilter，进行改造，接收登出请求时注销本地缓存，具体见ShiroLogoutFilter。上一步可以考虑合并与此合并
+		增加shiro监听器，session失效时删除与ticket的关系，具体见TicketSessionListener
