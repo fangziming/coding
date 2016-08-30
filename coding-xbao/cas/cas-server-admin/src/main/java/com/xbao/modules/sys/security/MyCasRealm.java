@@ -39,6 +39,7 @@ public class MyCasRealm extends CasRealm {
 	
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         CasToken casToken = (CasToken) token;
+        
         if (token == null) {
             return null;
         }
