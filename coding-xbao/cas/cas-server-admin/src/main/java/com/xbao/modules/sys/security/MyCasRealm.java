@@ -17,6 +17,8 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.jasig.cas.client.validation.AbstractTicketValidationFilter;
+import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
@@ -43,7 +45,9 @@ public class MyCasRealm extends CasRealm {
         
         String ticket = (String)casToken.getCredentials();
         
-        TicketValidator ticketValidator = ensureTicketValidator();
+        //modify by wuyanan168@163.com 编码格式默认为utf-8
+        AbstractUrlBasedTicketValidator ticketValidator = (AbstractUrlBasedTicketValidator)ensureTicketValidator();
+        ticketValidator.setEncoding("utf-8");
 
         try {
             // contact CAS server to validate service ticket
